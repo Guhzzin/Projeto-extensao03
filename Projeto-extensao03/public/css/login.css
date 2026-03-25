@@ -1,5 +1,5 @@
 body{
-    background-image: url('/Projeto-extensao03/public/img/wallpaper-login.jpg');
+    background-image: url('/public/img/wallpaper-login.jpg');
     background-size: cover;
     background-position: center;
     color: rgb(255, 255, 255);
@@ -10,7 +10,7 @@ body::before{
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(0,0,0,0.2); /* controla a claridade */
+    background: rgba(0,0,0,0.4); /* controla a claridade */
 }
 
 .login-card{
