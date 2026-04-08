@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro</title>
-    <link rel="stylesheet" href="/Projeto-extensao03/public/css/cadastro.css">
+    <link rel="stylesheet" href="css/cadastro.css">
      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -17,16 +17,12 @@
         <div class="login-card">
             <h2 class="fw-bold text-center mb-4 text-white">Criar Conta</h2>
 
-            <form id="formCadastro" action="cadastro.php" method="POST">
+            <form id="formCadastro" action="actions/cadastro.php" method="POST">
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
                     <input type="text" class="form-control" placeholder="Nome Completo" name="nome" required>
                 </div>
 
-                <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-                    <input type="text" class="form-control" placeholder="Usuário" name="username" required>
-                </div>
 
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
@@ -47,18 +43,18 @@
                     As senhas não coincidem!
                 </div>
 
-                <button class="btn btn-light w-100 text-dark fw-semibold" type="submit">
+                <button class="btn btn-light w-100 text-dark fw-semibold" type="submit" >
                     Cadastrar
                 </button>
 
                 <p class="cadastro-link text-center mt-3">
-                    <a href="login.html" class="text-white fw-semibold text-decoration-none">Já tem conta? Faça login</a>
+                    <a href="login.php" class="text-white fw-semibold text-decoration-none">Já tem conta? Faça login</a>
                 </p>
             </form>
         </div>
     </div>
 
-    <script src="../public/js/cadastro.js"></script>
+    <script src="js/cadastro.js"></script>
 
 </body>
 </html>
