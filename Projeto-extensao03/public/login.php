@@ -1,3 +1,18 @@
+<?php if (isset($_GET['sucesso'])): ?>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+  <strong>Cadastro realizado!</strong> Seus dados foram salvos com sucesso no sistema.
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+
+<?php if (isset($_GET['erro'])): ?>
+   <div class="alert alert-danger text-center"> 
+        <?php
+            if ($_GET['erro'] == 'senha') echo "<strong>Senha incorreta!</strong>";
+            if ($_GET['erro'] == 'usuario') echo "<strong>Usuário não encontrado!</strong>";
+        ?>
+    </div>
+<?php endif; ?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -11,18 +26,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../public/css/login.css">
+    <link rel="stylesheet" href="css/login.css">
     <title>Login</title>
 </head>
 <body>
+    
+
     <div class="d-flex justify-content-center align-items-center vh-100 p-3">
        <div class="login-card">
         <h2 class="fw-bold text-center mb-4">Login</h2>
 
-        <form action="login.php" method="POST">
+        <form action="actions/login.php" method="POST">
             <div class="input-group mb-3"> <!-- Usuario -->
                 <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-                <input type="text" class="form-control" placeholder="Usuário" name="username" required>
+                <input type="text" class="form-control" placeholder="Usuário" name="email" required>
             </div>
 
              <div class="input-group mb-3"> <!-- Senha -->
@@ -43,7 +60,7 @@
             </button>
 
              <!-- Link para cadastro -->
-            <p class="cadastro-link"><a href="cadastro.html" class="text-white fw-semibold text-decoration-none">Não tem uma conta? Cadastre-se aqui</a></p>
+            <p class="cadastro-link"><a href="cadastro.php" class="text-white fw-semibold text-decoration-none">Não tem uma conta? Cadastre-se aqui</a></p>
         </form>
 
        </div>
@@ -51,7 +68,7 @@
 
     </div>
 
-
+    
 
 
 

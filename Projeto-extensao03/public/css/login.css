@@ -1,5 +1,5 @@
 body{
-    background-image: url('/Projeto-extensao03/public/img/wallpaper-login.jpg');
+    background-image: url('../img/wallpaper-login.jpg');
     background-size: cover;
     background-position: center;
     color: rgb(255, 255, 255);
