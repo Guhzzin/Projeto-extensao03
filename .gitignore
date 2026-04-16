@@ -1,3 +1,4 @@
 .env
 /vendor/
+dados_do_banco/
 /node_modules/
