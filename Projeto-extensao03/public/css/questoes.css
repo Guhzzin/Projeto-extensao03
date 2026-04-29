@@ -1,0 +1,27 @@
+  
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-desafio {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .card-desafio:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* Estilo sutil para o botão de sair */
+        .btn-sair {
+            transition: all 0.2s;
+        }
+        .btn-sair:hover {
+            transform: scale(1.05);
+        }
+    

@@ -9,6 +9,7 @@ body {
     background-color: #f0f2f5;
     background-image: radial-gradient(#d1d9e6 0.5px, transparent 0.5px);
     background-size: 20px 20px; /* Cria um padrão de pontinhos tipo papel quadriculado */
+    font-family: 'Poppins', sans-serif;
 }
 @keyframes float {
     0% { transform: translateY(0px); }

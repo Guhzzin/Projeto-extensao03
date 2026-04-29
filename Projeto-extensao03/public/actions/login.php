@@ -12,7 +12,7 @@ if ($result->num_rows > 0) {
     $usuario = $result->fetch_assoc();
 
    if (password_verify($senha, $usuario['senha'])) {
-        $_SESSION['usuario'] = $usuario['id'];
+        $_SESSION['usuario_id'] = $usuario['id'];
         header("Location: ../home.php");
         exit;
     } else {
