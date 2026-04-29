@@ -17,3 +17,8 @@ marcar como concluída
 acompanhar progresso
 criar ranking
 mostrar tarefas feitas
+
+
+Logica e adição de questoes de adição (questoes.php) e validar as respostas no banco de dados e preencher a barra de xp e andamento (validar_resposta.php) e usar home.php para saber se ja concluiu
+
+erros: nao consigo tirar o alert de concluido a missao, nao aparece ainda pendente concluida etc e preciso colocar sistema de ranking ainda!!!
