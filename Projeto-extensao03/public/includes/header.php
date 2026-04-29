@@ -20,7 +20,7 @@
       
       <div class="d-flex align-items-center">
        <span class="navbar-text text-white me-3 boas-vindas">
-    Olá, <strong><?php echo explode(' ', $nome_exibicao)[0]; ?></strong>!
+  <i class="bi bi-person-circle"></i>  Olá, <strong><?php echo explode(' ', $nome_exibicao)[0]; ?></strong>!
         </span>
         <a href="logout.php" class="btn btn-outline-light btn-sm">Sair</a>
       </div>
