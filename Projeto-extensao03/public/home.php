@@ -13,21 +13,34 @@ if ($resultado && $usuario = mysqli_fetch_assoc($resultado)) {
     $nome_exibicao = $usuario['nome'];
 }
 
-// 3. NOVO: Busca o status das tarefas desse usuário no banco
+// ----------------------------------------------------
+// BUSCA O STATUS DOS NÍVEIS (Iniciante, Intermediário, Veterano)
+// ----------------------------------------------------
 $sql_tarefas = "SELECT titulo, status FROM tarefas WHERE usuario_id = $id_usuario";
 $res_tarefas = mysqli_query($conn, $sql_tarefas);
 
-$status_missoes = [];
+// Status padrão caso o aluno ainda não tenha começado nada
+$status_ini = 'pendente'; 
+$status_int = 'nao_existe';
+$status_vet = 'nao_existe';
+
 if ($res_tarefas) {
     while($row = mysqli_fetch_assoc($res_tarefas)) {
-        // Guarda o status usando o título como chave (tudo em minúsculo para facilitar)
-        $titulo_limpo = strtolower($row['titulo']);
-        $status_missoes[$titulo_limpo] = $row['status'];
+        // Pega o título do banco e deixa tudo minúsculo para comparar
+        $titulo = mb_strtolower(trim($row['titulo']), 'UTF-8');
+        
+        // Verifica qual é o nível da tarefa
+        if (strpos($titulo, 'iniciante') !== false || $titulo === 'adição') {
+            $status_ini = $row['status'];
+        } elseif (strpos($titulo, 'intermediario') !== false || strpos($titulo, 'intermediário') !== false) {
+            $status_int = $row['status'];
+        } elseif (strpos($titulo, 'veterano') !== false) {
+            $status_vet = $row['status'];
+        }
     }
 }
+// ----------------------------------------------------
 
-// Verifica se a missão de soma já foi concluída
-$status_soma = isset($status_missoes['adição']) ? $status_missoes['adição'] : 'pendente';
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -45,7 +58,7 @@ $status_soma = isset($status_missoes['adição']) ? $status_missoes['adição'] 
 <div class="container mt-3">
     <?php if (isset($_GET['status']) && $_GET['status'] == 'sucesso'): ?>
         <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-            <strong>🎉 Missão Cumprida!</strong> Você completou o desafio e ganhou XP extra!
+            <strong> Missão Cumprida!</strong> Você completou o desafio e ganhou XP extra!
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
@@ -73,12 +86,30 @@ $status_soma = isset($status_missoes['adição']) ? $status_missoes['adição'] 
           <h5 class="card-title">Adição</h5>
           <p class="card-text text-muted">Pratique somas básicas e suba de nível.</p>
           
-          <?php if ($status_soma == 'concluida'): ?>
+        <!-- LÓGICA DE ESCADA DOS BOTÕES DE ADIÇÃO -->
+          <?php if ($status_vet === 'concluida'): ?>
+              <!-- Zerou o jogo -->
               <button class="btn btn-secondary w-100 fw-bold" disabled>
-                  <i class="bi bi-check-circle-fill"></i> Concluído
+                  <i class="bi bi-check-circle-fill"></i> Mestre da Adição
               </button>
+              
+          <?php elseif ($status_int === 'concluida' || $status_vet === 'pendente'): ?>
+              <!-- Liberou o Veterano -->
+              <a href="questoes.php?tipo=soma&dif=veterano" class="btn btn-danger w-100 fw-bold shadow-sm">
+                  Nível 3: Veterano
+              </a>
+              
+          <?php elseif ($status_ini === 'concluida' || $status_int === 'pendente'): ?>
+              <!-- Liberou o Intermediário -->
+              <a href="questoes.php?tipo=soma&dif=intermediario" class="btn btn-warning text-dark w-100 fw-bold shadow-sm">
+                  Nível 2: Intermediário
+              </a>
+              
           <?php else: ?>
-              <a href="questoes.php?tipo=soma" class="btn btn-success w-100 fw-bold">Começar</a>
+              <!-- Início Padrão -->
+              <a href="questoes.php?tipo=soma&dif=iniciante" class="btn btn-success w-100 fw-bold shadow-sm">
+                  Nível 1: Iniciante
+              </a>
           <?php endif; ?>
 
         </div>
