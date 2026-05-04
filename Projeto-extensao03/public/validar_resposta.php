@@ -82,14 +82,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        // Se ainda não fechou 5/5, recarrega a página de questões com aviso verde
-        header("Location: questoes.php?tipo=$tipo_missao&feedback=correto");
+       
+
+   
+        $dif_atual = isset($_SESSION['dificuldade_atual']) ? $_SESSION['dificuldade_atual'] : 'iniciante';
+
+    
+        header("Location: questoes.php?tipo=$tipo_missao&dif=$dif_atual&feedback=correto");
         exit;
 
     } else {
-        // Se errou (acertou = 0), recarrega a página com aviso vermelho
-        // O progresso não zera, ele só precisa tentar outra questão
-        header("Location: questoes.php?tipo=$tipo_missao&feedback=erro");
+        // Resgata a dificuldade da sessão para o erro também
+        $dif_atual = isset($_SESSION['dificuldade_atual']) ? $_SESSION['dificuldade_atual'] : 'iniciante';
+
+        // Se errou (acertou = 0), recarrega a página com aviso vermelho MANTENDO a dificuldade
+        header("Location: questoes.php?tipo=$tipo_missao&dif=$dif_atual&feedback=erro");
         exit;
     }
 }
