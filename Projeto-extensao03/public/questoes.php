@@ -1,94 +1,76 @@
 <?php
-
-include_once(__DIR__ . "/includes/conexao.php");
-include_once(__DIR__ . "/includes/auth.php");
+require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/conexao.php';
 
 $usuario_id = $_SESSION['usuario_id'];
-$xp_atual = 0; // Valor padrão caso seja a primeira vez
 
-// 2. Busca o XP atual do usuário logado no banco de dados
-$sql_xp = "SELECT xp FROM usuarios WHERE id = $usuario_id";
-$resultado_xp = mysqli_query($conn, $sql_xp);
+// 1. Busca XP Real
+$res_user = mysqli_query($conn, "SELECT xp FROM usuarios WHERE id = $usuario_id");
+$user_data = mysqli_fetch_assoc($res_user);
+$xp_atual = $user_data['xp'] ?? 0;
 
-if ($resultado_xp && mysqli_num_rows($resultado_xp) > 0) {
-    $linha = mysqli_fetch_assoc($resultado_xp);
-    $xp_atual = $linha['xp'];
-}
-
+// 2. Configuração da Missão
 $tipo = isset($_GET['tipo']) ? $_GET['tipo'] : 'soma';
-$_SESSION['missao_atual'] = $tipo; 
+$dificuldade = isset($_GET['dif']) ? $_GET['dif'] : 'iniciante'; 
+$_SESSION['missao_atual'] = $tipo;
 
-// --- TRAVA DE MISSÃO CONCLUÍDA ---
-$busca_titulo = ($tipo == 'soma') ? 'adição' : $tipo;
-$sql_check = "SELECT status FROM tarefas WHERE usuario_id = $usuario_id AND (titulo LIKE '%$busca_titulo%' OR titulo LIKE '%soma%')";
+
+
+// 3. TRAVA: VERIFICA SE JÁ CONCLUIU A MISSÃO EXATA QUE ELE QUER ACESSAR
+
+// Monta o nome exato da tarefa. Ex: "Adição Iniciante", "Adição Intermediario"
+$nome_tarefa_exata = ucfirst($tipo) . " " . ucfirst($dificuldade);
+
+// Usa "=" no lugar do LIKE para garantir que é exatamente aquela tarefa
+$sql_check = "SELECT status FROM tarefas WHERE usuario_id = $usuario_id AND titulo = '$nome_tarefa_exata'";
 $res_check = mysqli_query($conn, $sql_check);
 
 if ($res_check && mysqli_num_rows($res_check) > 0) {
     $tarefa = mysqli_fetch_assoc($res_check);
     if ($tarefa['status'] === 'concluida') {
-        // Se já está concluída no banco, expulsa de volta pra home com aviso!
+        // Se a dificuldade específica que ele tentou acessar já estiver concluída, expulsa!
         header("Location: home.php?aviso=ja_concluido");
         exit;
     }
 }
+// ==========================================
 
-// --- Lógica do Progresso Real ---
+// 4. Lógica de Progresso da Sessão
 $objetivo = 5; 
+$progresso_sessao = isset($_SESSION['progresso']) ? $_SESSION['progresso'] : 0;
+$porcentagem = ($progresso_sessao / $objetivo) * 100;
 
-// Se a sessão de progresso não existir, ela começa em 0
-$progresso_atual = isset($_SESSION['progresso']) ? $_SESSION['progresso'] : 0;
+// ==========================================
+// 5. BUSCA A QUESTÃO NO BANCO
+// ==========================================
+$sql_busca_questao = "
+    SELECT id, enunciado, opcao_a, opcao_b, opcao_c, opcao_d, resposta_correta, xp_recompensa, dificuldade 
+    FROM banco_questoes 
+    WHERE categoria = '$tipo' 
+      AND dificuldade = '$dificuldade'
+      AND id NOT IN (
+          SELECT questao_id FROM historico_respostas 
+          WHERE usuario_id = $usuario_id AND acertou = 1
+      )
+    ORDER BY RAND() 
+    LIMIT 1
+";
 
-// Cálculo da porcentagem para o CSS da barra
-$porcentagem = ($progresso_atual / $objetivo) * 100;
+$resultado_questao = mysqli_query($conn, $sql_busca_questao);
 
-// Pega o tipo de operação da URL
-$tipo = isset($_GET['tipo']) ? $_GET['tipo'] : 'soma';
-
-$num1 = 0;
-$num2 = 0;
-$sinal = '';
-$nome_missao = '';
-$resposta_correta = 0;
-
-// Define a lógica com base no tipo da URL
-switch ($tipo) {
-    case 'subtracao':
-        $nome_missao = 'Subtração';
-        $sinal = '-';
-        $num1 = rand(10, 50); // Número maior
-        $num2 = rand(1, $num1); // Número menor ou igual ao primeiro
-        $resposta_correta = $num1 - $num2;
-        break;
-
-    case 'multiplicacao':
-        $nome_missao = 'Multiplicação';
-        $sinal = 'x';
-        $num1 = rand(2, 10);
-        $num2 = rand(2, 10);
-        $resposta_correta = $num1 * $num2;
-        break;
-
-    case 'divisao':
-        $nome_missao = 'Divisão';
-        $sinal = '÷';
-        $num2 = rand(2, 10); // Divisor
-        $resposta_correta = rand(2, 10); // O resultado (quociente)
-        $num1 = $num2 * $resposta_correta; // Garante que a divisão seja sempre exata
-        break;
-
-    case 'soma':
-    default:
-        $nome_missao = 'Adição';
-        $sinal = '+';
-        $num1 = rand(1, 50);
-        $num2 = rand(1, 50);
-        $resposta_correta = $num1 + $num2;
-        break;
+// Se não achou questão (acabaram as perguntas)
+if (!$resultado_questao || mysqli_num_rows($resultado_questao) == 0) {
+    header("Location: home.php?aviso=sem_questoes");
+    exit;
 }
 
-// segurança do inspecionar
-$_SESSION['resposta_correta_atual'] = $resposta_correta;
-$_SESSION['missao_atual'] = $tipo; 
+$questao = mysqli_fetch_assoc($resultado_questao);
+
+// Salva na sessão para o validar_resposta.php saber depois
+$_SESSION['resposta_correta_atual'] = $questao['resposta_correta'];
+$_SESSION['id_questao_atual'] = $questao['id'];
+$_SESSION['dificuldade_atual'] = $dificuldade; // Guarda a dificuldade atual!
+$_SESSION['xp_da_questao'] = $questao['xp_recompensa'];
 ?>
 
 <!DOCTYPE html>
@@ -96,82 +78,101 @@ $_SESSION['missao_atual'] = $tipo;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Missão: <?= $nome_missao ?></title>
+    <title>Missão: <?= ucfirst($tipo) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/questoes.css">
-</head>
-
+    <link rel="stylesheet" href="css/questoes.css"> <!-- Mantendo seu CSS -->
 </head>
 <body class="bg-light d-flex align-items-center min-vh-100">
+
     <div class="container fade-in">
         
-        <div class="row mb-4 justify-content-between align-items-center">
-            
-            <div class="col-4 text-start">
-                <a href="home.php" class="btn btn-outline-danger btn-sm fw-bold btn-sair rounded-pill px-3">
-                    &larr; Abandonar Missão
-                </a>
+        <!-- HUD Superior -->
+        <div class="row mb-4 align-items-center">
+            <div class="col-4">
+                <a href="home.php" class="btn btn-outline-secondary rounded-pill fw-bold">&larr; Sair</a>
             </div>
-
             <div class="col-4 text-center">
-                <span class="badge bg-warning text-dark p-2 fs-6 rounded-pill shadow-sm">
-                    ⭐ XP: <?= $xp_atual ?>
+                <span class="badge bg-warning text-dark p-2 px-3 rounded-pill fs-6 shadow-sm">
+                    ⭐ <?= $xp_atual ?> XP
                 </span>
             </div>
-
             <div class="col-4 text-end">
-                <span class="badge bg-info p-2 fs-6 rounded-pill shadow-sm">
-                    Nível 1: Iniciante
+                <span class="badge bg-info p-2 px-3 rounded-pill fs-6 shadow-sm">
+                    🔥 Combo: <?= $progresso_sessao ?>
                 </span>
             </div>
         </div>
 
         <div class="row justify-content-center">
-            <div class="col-md-6">
+            <div class="col-md-8"> <!-- Aumentei a largura pra caber os botões -->
                 
-               <p class="text-muted mb-1 small fw-bold text-center">
-    Progresso (<?= $progresso_atual ?>/<?= $objetivo ?>)
-</p>
+                <?php if (isset($_GET['feedback'])): ?>
+                    <div class="alert alert-<?= $_GET['feedback'] == 'correto' ? 'success' : 'danger' ?> text-center fw-bold">
+                        <?= $_GET['feedback'] == 'correto' ? ' Mandou bem! Acertou!' : '❌ Quase! Tente novamente.' ?>
+                    </div>
+                <?php endif; ?>
 
-<div class="progress mb-4" style="height: 15px; border-radius: 10px;">
-    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
-         role="progressbar" 
-         style="width: <?= $porcentagem ?>%;" 
-         aria-valuenow="<?= $porcentagem ?>" 
-         aria-valuemin="0" 
-         aria-valuemax="100">
-    </div>
-</div>
+                <div class="text-center mb-2">
+                    <small class="fw-bold text-muted text-uppercase">Progresso da Missão: <?= $progresso_sessao ?> / <?= $objetivo ?></small>
+                </div>
+                <div class="progress mb-4 shadow-sm" style="height: 15px; border-radius: 10px;">
+                    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" style="width: <?= $porcentagem ?>%;"></div>
+                </div>
 
-                <div class="card card-desafio">
-                    <div class="card-body p-5 text-center">
-                        <h4 class="text-uppercase fw-bold text-secondary mb-4">Desafio de <?= $nome_missao ?></h4>
+                <!-- NOVO CARD COM MÚLTIPLA ESCOLHA -->
+                <div class="card card-desafio shadow shadow-lg">
+                    <div class="card-body p-5">
                         
-                        <div class="bg-light rounded p-4 mb-4 border">
-                            <h1 class="display-1 fw-bold text-primary mb-0">
-                                <?= $num1 ?> <?= $sinal ?> <?= $num2 ?>
-                            </h1>
+                        <!-- Mostra a Dificuldade e o Enunciado -->
+                        <div class="d-flex justify-content-between mb-4">
+                            <h5 class="text-muted text-uppercase fw-bold m-0">Desafio de <?= ucfirst($tipo) ?></h5>
+                            <span class="badge bg-dark"><?= ucfirst($questao['dificuldade']) ?> (<?= $questao['xp_recompensa'] ?> XP)</span>
                         </div>
                         
+                        <h3 class="fw-bold text-dark mb-5 text-center">
+                            <?= $questao['enunciado'] ?>
+                        </h3>
+
+                        <!-- Formulário de Múltipla Escolha -->
                         <form action="validar_resposta.php" method="POST">
-                            <div class="mb-4">
-                                <input type="number" name="resposta_usuario" class="form-control form-control-lg text-center fw-bold fs-3" placeholder="Sua resposta" required autofocus style="border-width: 3px;">
+                            <div class="d-grid gap-3">
+                                
+                                <label class="btn btn-outline-primary text-start p-3 fs-5">
+                                    <input type="radio" name="resposta_usuario" value="A" class="me-2" required> 
+                                    <strong>A)</strong> <?= $questao['opcao_a'] ?>
+                                </label>
+
+                                <label class="btn btn-outline-primary text-start p-3 fs-5">
+                                    <input type="radio" name="resposta_usuario" value="B" class="me-2"> 
+                                    <strong>B)</strong> <?= $questao['opcao_b'] ?>
+                                </label>
+
+                                <?php if (!empty($questao['opcao_c'])): ?>
+                                <label class="btn btn-outline-primary text-start p-3 fs-5">
+                                    <input type="radio" name="resposta_usuario" value="C" class="me-2"> 
+                                    <strong>C)</strong> <?= $questao['opcao_c'] ?>
+                                </label>
+                                <?php endif; ?>
+
+                                <?php if (!empty($questao['opcao_d'])): ?>
+                                <label class="btn btn-outline-primary text-start p-3 fs-5">
+                                    <input type="radio" name="resposta_usuario" value="D" class="me-2"> 
+                                    <strong>D)</strong> <?= $questao['opcao_d'] ?>
+                                </label>
+                                <?php endif; ?>
+
                             </div>
-                            <button type="submit" class="btn btn-success btn-lg w-100 fw-bold fs-5 rounded-pill shadow-sm">
-                                ENVIAR RESPOSTA
+                            
+                            <button type="submit" class="btn btn-success btn-lg w-100 fw-bold py-3 mt-4 rounded-pill shadow">
+                                CONFIRMAR RESPOSTA
                             </button>
                         </form>
+
                     </div>
                 </div>
                 
             </div>
         </div>
     </div>
-
 </body>
 </html>

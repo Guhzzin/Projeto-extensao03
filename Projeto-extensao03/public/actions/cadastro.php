@@ -12,7 +12,7 @@ if ($conn->query($sql)){
     
     // Cria a primeira missão de Adição para ele automaticamente!
     $sql_tarefa = "INSERT INTO tarefas (usuario_id, titulo, descricao, status) 
-                   VALUES ($novo_usuario_id, 'Adição', 'Missão básica de soma', 'pendente')";
+                   VALUES ($novo_usuario_id, 'Adição Iniciante', 'Missão básica de soma', 'pendente')";
     $conn->query($sql_tarefa);
 
     // Cadastro bem-sucedido
