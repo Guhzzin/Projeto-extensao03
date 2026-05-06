@@ -20,10 +20,10 @@ CREATE TABLE tarefas (
 -- Tabela para guardar o estoque de perguntas
 CREATE TABLE banco_questoes (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    categoria VARCHAR(50) NOT NULL, -- ex: 'soma', 'subtracao', 'multiplicacao', 'divisao'
+    categoria VARCHAR(50) NOT NULL, --  'soma', 'subtracao', 'multiplicacao', 'divisao'
     dificuldade ENUM('iniciante', 'intermediario', 'veterano') NOT NULL DEFAULT 'iniciante',
     enunciado TEXT NOT NULL,
-    -- Opções (Deixei até 4 opções, se a questão for de verdadeiro/falso, você só preenche A e B)
+    -- Opções  4 opções, se a questão for de verdadeiro/falso, você só preenche A e B
     opcao_a VARCHAR(255) NOT NULL,
     opcao_b VARCHAR(255) NOT NULL,
     opcao_c VARCHAR(255),
@@ -65,9 +65,6 @@ INSERT INTO banco_questoes (categoria, dificuldade, enunciado, opcao_a, opcao_b,
 ('soma', 'veterano', 'A soma de 15.000 + 25.500 + 10.500 resulta em um valor estritamente maior que 50.000.', 'Verdadeiro', 'Falso', NULL, NULL, 'A', 50),
 ('soma', 'veterano', 'A soma de dois números ímpares gigantes, como 15.347 e 9.871, resultará sempre em outro número ímpar.', 'Verdadeiro', 'Falso', NULL, NULL, 'B', 50);
 
--- Inserindo uma de SUBTRAÇÃO (Apenas para exemplo de Verdadeiro ou Falso)
-INSERT INTO banco_questoes (categoria, dificuldade, enunciado, opcao_a, opcao_b, resposta_correta, xp_recompensa) VALUES
-('subtracao', 'iniciante', 'A subtração de 10 - 5 resulta em um número ímpar?', 'Verdadeiro', 'Falso', 'A', 10);
 
 -- Tabela para registrar o histórico de acertos/erros de cada aluno
 CREATE TABLE historico_respostas (

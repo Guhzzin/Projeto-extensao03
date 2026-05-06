@@ -78,7 +78,9 @@ $_SESSION['xp_da_questao'] = $questao['xp_recompensa'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Missão: <?= ucfirst($tipo) ?></title>
+    <title>Missão: <?= $nome_tarefa_exata ?></title>
+    <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/questoes.css"> <!-- Mantendo seu CSS -->
 </head>
