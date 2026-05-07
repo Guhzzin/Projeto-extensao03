@@ -20,6 +20,9 @@ $pagina_atual = basename($_SERVER['PHP_SELF']);
         <li class="nav-item">
           <a class="nav-link <?= ($pagina_atual == 'ranking.php') ? 'active' : '' ?>" href="ranking.php">Ranking</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link <?= ($pagina_atual == 'estatisticas.php') ? 'active' : '' ?>" href="estatisticas.php">Estatísticas</a>
+        </li>
       </ul>
       
       <div class="d-flex align-items-center">
