@@ -108,11 +108,7 @@ $_SESSION['xp_da_questao'] = $questao['xp_recompensa'];
         <div class="row justify-content-center">
             <div class="col-md-8"> <!-- Aumentei a largura pra caber os botões -->
                 
-                <?php if (isset($_GET['feedback'])): ?>
-                    <div class="alert alert-<?= $_GET['feedback'] == 'correto' ? 'success' : 'danger' ?> text-center fw-bold">
-                        <?= $_GET['feedback'] == 'correto' ? ' Mandou bem! Acertou!' : '❌ Quase! Tente novamente.' ?>
-                    </div>
-                <?php endif; ?>
+                
 
                 <div class="text-center mb-2">
                     <small class="fw-bold text-muted text-uppercase">Progresso da Missão: <?= $progresso_sessao ?> / <?= $objetivo ?></small>
@@ -176,5 +172,39 @@ $_SESSION['xp_da_questao'] = $questao['xp_recompensa'];
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Configuração padrão do "Toast" (Aquele pop-up de canto de tela)
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end', // Aparece no canto superior direito
+            showConfirmButton: false,
+            timer: 2500, // Some em 2.5 segundos
+            timerProgressBar: true, // Mostra uma barrinha de tempo diminuindo
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        // O PHP "escreve" o gatilho da animação dependendo de como o aluno respondeu
+        <?php if (isset($_GET['feedback'])): ?>
+            
+            <?php if ($_GET['feedback'] == 'correto'): ?>
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Mandou bem! Acertou!'
+                });
+            <?php else: ?>
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Ops! Tente novamente.'
+                });
+            <?php endif; ?>
+
+        <?php endif; ?>
+    </script>
 </body>
 </html>

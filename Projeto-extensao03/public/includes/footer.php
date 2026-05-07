@@ -11,6 +11,7 @@
                 <h5 class="text-uppercase mb-4 font-weight-bold text-primary">Links</h5>
                 <p class="small"><a href="home.php" class="text-body-secondary text-decoration-none">Início</a></p>
                 <p class="small"><a href="ranking.php" class="text-body-secondary text-decoration-none">Ranking</a></p>
+                <p class="small"><a href="estatisticas.php" class="text-body-secondary text-decoration-none">Estatísticas</a></p>
             </div>
 
             <div class="col-md-4 col-lg-4 col-xl-4 mx-auto mt-3">
