@@ -17,24 +17,20 @@ CREATE TABLE tarefas (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
 
--- Tabela para guardar o estoque de perguntas
 CREATE TABLE banco_questoes (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    categoria VARCHAR(50) NOT NULL, --  'soma', 'subtracao', 'multiplicacao', 'divisao'
+    categoria VARCHAR(50) NOT NULL, 
     dificuldade ENUM('iniciante', 'intermediario', 'veterano') NOT NULL DEFAULT 'iniciante',
     enunciado TEXT NOT NULL,
-    -- Opções  4 opções, se a questão for de verdadeiro/falso, você só preenche A e B
     opcao_a VARCHAR(255) NOT NULL,
     opcao_b VARCHAR(255) NOT NULL,
     opcao_c VARCHAR(255),
     opcao_d VARCHAR(255),
-    resposta_correta VARCHAR(5) NOT NULL, -- Vai guardar 'A', 'B', 'C' ou 'D'
+    resposta_correta VARCHAR(5) NOT NULL, 
     xp_recompensa INT DEFAULT 10,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
--- Inserindo questões de SOMA
 INSERT INTO banco_questoes (categoria, dificuldade, enunciado, opcao_a, opcao_b, opcao_c, opcao_d, resposta_correta, xp_recompensa) VALUES
 ('soma', 'iniciante', 'Quanto é 5 + 7?', '10', '11', '12', '13', 'C', 10),
 ('soma', 'iniciante', 'Maria tem 3 maçãs e ganhou mais 4. Quantas maçãs Maria tem agora?', '6', '7', '8', '9', 'B', 10),
@@ -48,10 +44,10 @@ INSERT INTO banco_questoes (categoria, dificuldade, enunciado, opcao_a, opcao_b,
 ('soma', 'iniciante', 'Resolva: 9 + 9 = ?', '18', '19', '20', '21', 'A', 10),
 ('soma', 'iniciante', 'Lucas tinha R$ 20 e ganhou R$ 15 de sua avó. Quanto ele tem agora?', 'R$ 30', 'R$ 35', 'R$ 40', 'R$ 45', 'B', 10),
 ('soma', 'iniciante', 'Qual o valor de 100 + 25?', '115', '120', '125', '130', 'C', 10),
-('soma', 'iniciante', 'O resultado de 5 + 5 é igual a 10.', 'Verdadeiro', 'Falso', 'A', 10),
-('soma', 'iniciante', 'Se eu somar 7 + 2, o resultado será 8.', 'Verdadeiro', 'Falso', 'B', 10),
-('soma', 'iniciante', 'Somar zero (0) a qualquer número não altera o valor dele.', 'Verdadeiro', 'Falso', 'A', 10),
-('soma', 'iniciante', 'A conta 10 + 10 tem como resultado o número 30.', 'Verdadeiro', 'Falso', 'B', 10),
+('soma', 'iniciante', 'O resultado de 5 + 5 é igual a 10.', 'Verdadeiro', 'Falso', NULL, NULL, 'A', 10),
+('soma', 'iniciante', 'Se eu somar 7 + 2, o resultado será 8.', 'Verdadeiro', 'Falso', NULL, NULL, 'B', 10),
+('soma', 'iniciante', 'Somar zero (0) a qualquer número não altera o valor dele.', 'Verdadeiro', 'Falso', NULL, NULL, 'A', 10),
+('soma', 'iniciante', 'A conta 10 + 10 tem como resultado o número 30.', 'Verdadeiro', 'Falso', NULL, NULL, 'B', 10),
 ('soma', 'intermediario', 'Qual é o resultado da soma de 156 + 284?', '430', '440', '450', '460', 'B', 20),
 ('soma', 'intermediario', 'Uma escola tem 345 alunos no período da manhã e 478 no período da tarde. Qual o total de alunos?', '813', '823', '833', '843', 'B', 20),
 ('soma', 'intermediario', 'Resolva: 589 + 134 = ?', '713', '723', '733', '743', 'B', 20),
@@ -65,15 +61,12 @@ INSERT INTO banco_questoes (categoria, dificuldade, enunciado, opcao_a, opcao_b,
 ('soma', 'veterano', 'A soma de 15.000 + 25.500 + 10.500 resulta em um valor estritamente maior que 50.000.', 'Verdadeiro', 'Falso', NULL, NULL, 'A', 50),
 ('soma', 'veterano', 'A soma de dois números ímpares gigantes, como 15.347 e 9.871, resultará sempre em outro número ímpar.', 'Verdadeiro', 'Falso', NULL, NULL, 'B', 50);
 
-
--- Tabela para registrar o histórico de acertos/erros de cada aluno
 CREATE TABLE historico_respostas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
     questao_id INT NOT NULL,
-    acertou BOOLEAN NOT NULL, -- 1 se acertou, 0 se errou
+    acertou BOOLEAN NOT NULL,
     respondido_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
     FOREIGN KEY (questao_id) REFERENCES banco_questoes(id)
 );
-
