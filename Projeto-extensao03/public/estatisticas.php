@@ -4,7 +4,7 @@ require_once __DIR__ . '/includes/conexao.php';
 
 $id_usuario = $_SESSION['usuario_id'];
 
-// 1. Busca o nome do usuário (para o header)
+// (para o header)
 $query_user = "SELECT nome FROM usuarios WHERE id = $id_usuario";
 $res_user = mysqli_query($conn, $query_user);
 $nome_exibicao = "Estudante";
@@ -12,9 +12,7 @@ if ($res_user && $usuario = mysqli_fetch_assoc($res_user)) {
     $nome_exibicao = $usuario['nome'];
 }
 
-// ==========================================
-// 2. LÓGICA DO BACK-END AVANÇADA (Com JOIN e GROUP BY)
-// ==========================================
+
 // Aqui nós cruzamos (JOIN) o histórico com o banco de questões para saber qual era a categoria.
 // Depois, agrupamos (GROUP BY) para o banco de dados nos dar uma linha de totais para cada categoria!
 $sql_estatisticas = "

@@ -17,7 +17,7 @@
             <div class="col-md-4 col-lg-4 col-xl-4 mx-auto mt-3">
                 <h5 class="text-uppercase mb-4 font-weight-bold text-primary">Projeto Integrador</h5>
                 <p class="small mb-1 text-body-secondary"><i class="bi bi-mortarboard-fill"></i><strong> Curso:</strong> Ciências da computação</p>
-                <p class="small mb-1 text-body-secondary"><i class="bi bi-person-fill"></i><strong> Desenvolvedores:</strong> Gustavo Jakobczynski/Gabriel Luigi</p>
+                <p class="small mb-1 text-body-secondary"><i class="bi bi-person-fill"></i><strong> Desenvolvedores:</strong> Gustavo Jakobczynski|Gabriel Luigi</p>
                 <p class="small text-body-secondary"><i class="bi bi-bank2"></i><strong> Instituição:</strong> Gran Faculdade</p>
             </div>
 

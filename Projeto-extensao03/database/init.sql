@@ -61,6 +61,32 @@ INSERT INTO banco_questoes (categoria, dificuldade, enunciado, opcao_a, opcao_b,
 ('soma', 'veterano', 'A soma de 15.000 + 25.500 + 10.500 resulta em um valor estritamente maior que 50.000.', 'Verdadeiro', 'Falso', NULL, NULL, 'A', 50),
 ('soma', 'veterano', 'A soma de dois números ímpares gigantes, como 15.347 e 9.871, resultará sempre em outro número ímpar.', 'Verdadeiro', 'Falso', NULL, NULL, 'B', 50);
 
+INSERT INTO banco_questoes (categoria, dificuldade, enunciado, opcao_a, opcao_b, opcao_c, opcao_d, resposta_correta, xp_recompensa) VALUES
+('subtracao', 'iniciante', 'Quanto é 10 - 4?', '4', '5', '6', '7', 'C', 10),
+('subtracao', 'iniciante', 'Se você tem 8 balas e come 3, com quantas fica?', '3', '4', '5', '6', 'C', 10),
+('subtracao', 'iniciante', 'Resolva: 15 - 5 = ?', '8', '9', '10', '11', 'C', 10),
+('subtracao', 'iniciante', 'Quanto é 20 - 10?', '5', '10', '15', '20', 'B', 10),
+('subtracao', 'iniciante', 'A conta 12 - 4 resulta em 8.', 'Verdadeiro', 'Falso', NULL, NULL, 'A', 10),
+
+('subtracao', 'intermediario', 'Se eu subtrair 45 de 100, qual o resultado?', '45', '55', '65', '75', 'B', 20),
+('subtracao', 'intermediario', 'Um livro tem 250 páginas. Já li 120. Quantas faltam?', '120', '130', '140', '150', 'B', 20),
+('subtracao', 'intermediario', 'Resolva: 489 - 234 = ?', '245', '255', '265', '275', 'B', 20),
+('subtracao', 'intermediario', 'Subtraindo 150 de 300, o resultado é menor que 100.', 'Verdadeiro', 'Falso', NULL, NULL, 'B', 20),
+('subtracao', 'intermediario', 'Se eu tenho 680 figurinhas e dou 250 para meu amigo, com quantas eu fico?', '420', '430', '440', '450', 'B', 20),
+('subtracao', 'intermediario', 'Qual o resultado de 1.000 - 350?', '550', '600', '650', '700', 'C', 20),
+('subtracao', 'intermediario', 'Uma loja de roupas tinha 500 camisetas no estoque. Foram vendidas 215 no final de semana. Quantas restaram?', '285', '295', '305', '315', 'A', 20),
+('subtracao', 'intermediario', 'Resolva: 854 - 321 = ?', '523', '533', '543', '553', 'B', 20),
+('subtracao', 'intermediario', 'A subtração de 500 - 250 resulta exatamente no número 250.', 'Verdadeiro', 'Falso', NULL, NULL, 'A', 20),
+
+('subtracao', 'veterano', 'Calcule o valor exato de 5.432 - 1.897:', '3.435', '3.535', '3.635', '3.735', 'B', 50),
+('subtracao', 'veterano', 'Uma fábrica tinha 15.000 peças. Vendeu 8.450. Quantas sobraram no estoque?', '6.450', '6.550', '6.650', '6.750', 'B', 50),
+('subtracao', 'veterano', 'A subtração de 10.000 - 4.550 resulta em 5.450.', 'Verdadeiro', 'Falso', NULL, NULL, 'A', 50),
+('subtracao', 'veterano', 'Calcule o valor de 9.876 - 4.321:', '5.455', '5.555', '5.655', '5.755', 'B', 50),
+('subtracao', 'veterano', 'Uma concessionária vendia um carro por R$ 85.000. Na promoção, o valor teve um desconto de R$ 12.450. Qual o valor final pago pelo cliente?', 'R$ 72.450', 'R$ 72.550', 'R$ 73.450', 'R$ 73.550', 'B', 50),
+('subtracao', 'veterano', 'Se a meta de arrecadação de uma ONG era R$ 25.000 e eles já conseguiram R$ 16.750, quanto ainda falta?', 'R$ 8.150', 'R$ 8.250', 'R$ 8.350', 'R$ 8.450', 'B', 50),
+('subtracao', 'veterano', 'Resolva a expressão com duas subtrações: 15.000 - 3.750 - 1.250 = ?', '9.000', '9.500', '10.000', '10.500', 'C', 50),
+('subtracao', 'veterano', 'Subtrair 9.999 de 20.000 resulta exatamente no número 10.001.', 'Verdadeiro', 'Falso', NULL, NULL, 'A', 50);
+
 CREATE TABLE historico_respostas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
