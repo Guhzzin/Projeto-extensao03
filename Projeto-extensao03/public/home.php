@@ -2,10 +2,9 @@
 require_once(__DIR__ . "/includes/auth.php");
 require_once(__DIR__ . "/includes/conexao.php");
 
-// 1. CORREÇÃO: Usar usuario_id
 $id_usuario = $_SESSION['usuario_id'];
 
-// 2. Busca o nome do usuário
+// Busca o nome do usuário
 $query = "SELECT nome FROM usuarios WHERE id = $id_usuario";
 $resultado = mysqli_query($conn, $query);
 $nome_exibicao = "Estudante";
@@ -13,33 +12,33 @@ if ($resultado && $usuario = mysqli_fetch_assoc($resultado)) {
     $nome_exibicao = $usuario['nome'];
 }
 
-// ----------------------------------------------------
-// BUSCA O STATUS DOS NÍVEIS (Iniciante, Intermediário, Veterano)
-// ----------------------------------------------------
+//
+// Array matriz que guarda o status de TUDO!
+$missoes = [
+    'Adição' => ['iniciante' => 'pendente', 'intermediario' => 'nao_existe', 'veterano' => 'nao_existe'],
+    'Subtração' => ['iniciante' => 'pendente', 'intermediario' => 'nao_existe', 'veterano' => 'nao_existe']
+];
+
 $sql_tarefas = "SELECT titulo, status FROM tarefas WHERE usuario_id = $id_usuario";
 $res_tarefas = mysqli_query($conn, $sql_tarefas);
 
-// Status padrão caso o aluno ainda não tenha começado nada
-$status_ini = 'pendente'; 
-$status_int = 'nao_existe';
-$status_vet = 'nao_existe';
-
 if ($res_tarefas) {
     while($row = mysqli_fetch_assoc($res_tarefas)) {
-        // Pega o título do banco e deixa tudo minúsculo para comparar
-        $titulo = mb_strtolower(trim($row['titulo']), 'UTF-8');
+        // Separa o "Adição" do "Iniciante" (O banco guarda "Adição Iniciante")
+        $partes = explode(' ', trim($row['titulo']));
         
-        // Verifica qual é o nível da tarefa
-        if (strpos($titulo, 'iniciante') !== false || $titulo === 'adição') {
-            $status_ini = $row['status'];
-        } elseif (strpos($titulo, 'intermediario') !== false || strpos($titulo, 'intermediário') !== false) {
-            $status_int = $row['status'];
-        } elseif (strpos($titulo, 'veterano') !== false) {
-            $status_vet = $row['status'];
+        if (count($partes) >= 2) {
+            $categoria = $partes[0]; // Adição ou Subtração
+            $dificuldade = strtolower($partes[1]); // iniciante, intermediario, veterano
+            $status = $row['status'];
+
+            // Se existir no nosso array, atualiza o status real
+            if (isset($missoes[$categoria][$dificuldade])) {
+                $missoes[$categoria][$dificuldade] = $status;
+            }
         }
     }
 }
-// ----------------------------------------------------
 
 ?>
 <!DOCTYPE html>
@@ -53,7 +52,7 @@ if ($res_tarefas) {
     <title>Home | MathQuest</title>
     <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
 </head>
-<body>
+<body class="bg-body-tertiary">
   <?php include_once(__DIR__ . "/includes/header.php"); ?>
 
 <div class="container mt-3">
@@ -72,52 +71,62 @@ if ($res_tarefas) {
     <?php endif; ?>
 </div>
 
-<section class="py-5 mb-4 bg-light rounded-4 shadow-sm text-center container">
-    <span class="badge rounded-pill bg-primary mb-3 px-3 py-2 text-uppercase">Nível 1: Iniciante</span>
-    <h1 class="display-5 fw-bold text-dark">Pronto para o desafio de hoje?</h1>
-    <p class="lead text-muted mb-0">Escolha uma operação abaixo, resolva os problemas e acumule <strong>pontos de XP</strong>!</p>
+<section class="py-5 mb-4 bg-body-tertiary rounded-4 shadow-sm text-center container border">
+    <span class="badge rounded-pill bg-primary mb-3 px-3 py-2 text-uppercase">Área de Treinamento</span>
+    <h1 class="display-5 fw-bold text-body">Pronto para o desafio de hoje?</h1>
+    <p class="lead text-body-secondary mb-0">Escolha uma operação abaixo, resolva os problemas e acumule <strong>pontos de XP</strong>!</p>
 </section>
 
 <div class="container">
-  <div class="row mt-4">
-    <div class="col-md-4 mb-4">
+  <div class="row mt-4 justify-content-center">
+    
+    <div class="col-md-5 mb-4">
       <div class="card h-100 border-start border-4 border-success shadow-sm">
-        <div class="card-body text-center">
-          <div class="display-1 text-success mb-3">+</div>
-          <h5 class="card-title">Adição</h5>
-          <p class="card-text text-muted">Pratique somas básicas e suba de nível.</p>
+        <div class="card-body text-center p-4">
+          <div class="display-1 text-success mb-3"><i class="bi bi-plus-circle-fill"></i></div>
+          <h4 class="card-title fw-bold">Adição</h4>
+          <p class="card-text text-body-secondary mb-4">Pratique somas básicas e suba de nível.</p>
           
-        <!-- LÓGICA DE ESCADA DOS BOTÕES DE ADIÇÃO -->
-          <?php if ($status_vet === 'concluida'): ?>
-              <!-- Zerou o jogo -->
-              <button class="btn btn-secondary w-100 fw-bold" disabled>
-                  <i class="bi bi-check-circle-fill"></i> Mestre da Adição
-              </button>
-              
-          <?php elseif ($status_int === 'concluida' || $status_vet === 'pendente'): ?>
-              <!-- Liberou o Veterano -->
-              <a href="questoes.php?tipo=soma&dif=veterano" class="btn btn-danger w-100 fw-bold shadow-sm">
-                  Nível 3: Veterano
-              </a>
-              
-          <?php elseif ($status_ini === 'concluida' || $status_int === 'pendente'): ?>
-              <!-- Liberou o Intermediário -->
-              <a href="questoes.php?tipo=soma&dif=intermediario" class="btn btn-warning text-dark w-100 fw-bold shadow-sm">
-                  Nível 2: Intermediário
-              </a>
-              
+          <?php 
+          $soma = $missoes['Adição']; 
+          if ($soma['veterano'] === 'concluida'): ?>
+              <button class="btn btn-secondary w-100 fw-bold py-2" disabled><i class="bi bi-check-circle-fill"></i> Mestre da Adição</button>
+          <?php elseif ($soma['intermediario'] === 'concluida' || $soma['veterano'] === 'pendente'): ?>
+              <a href="questoes.php?tipo=soma&dif=veterano" class="btn btn-danger w-100 fw-bold shadow-sm py-2">Nível 3: Veterano</a>
+          <?php elseif ($soma['iniciante'] === 'concluida' || $soma['intermediario'] === 'pendente'): ?>
+              <a href="questoes.php?tipo=soma&dif=intermediario" class="btn btn-warning text-dark w-100 fw-bold shadow-sm py-2">Nível 2: Intermediário</a>
           <?php else: ?>
-              <!-- Início Padrão -->
-              <a href="questoes.php?tipo=soma&dif=iniciante" class="btn btn-success w-100 fw-bold shadow-sm">
-                  Nível 1: Iniciante
-              </a>
+              <a href="questoes.php?tipo=soma&dif=iniciante" class="btn btn-success w-100 fw-bold shadow-sm py-2">Nível 1: Iniciante</a>
           <?php endif; ?>
-
         </div>
       </div>
     </div>
+
+    <div class="col-md-5 mb-4">
+      <div class="card h-100 border-start border-4 border-info shadow-sm">
+        <div class="card-body text-center p-4">
+          <div class="display-1 text-info mb-3"><i class="bi bi-dash-circle-fill"></i></div>
+          <h4 class="card-title fw-bold">Subtração</h4>
+          <p class="card-text text-body-secondary mb-4">Treine a lógica de diminuir e resolver diferenças.</p>
+          
+          <?php 
+          $subtracao = $missoes['Subtração']; 
+          if ($subtracao['veterano'] === 'concluida'): ?>
+              <button class="btn btn-secondary w-100 fw-bold py-2" disabled><i class="bi bi-check-circle-fill"></i> Mestre da Subtração</button>
+          <?php elseif ($subtracao['intermediario'] === 'concluida' || $subtracao['veterano'] === 'pendente'): ?>
+              <a href="questoes.php?tipo=subtracao&dif=veterano" class="btn btn-danger w-100 fw-bold shadow-sm py-2">Nível 3: Veterano</a>
+          <?php elseif ($subtracao['iniciante'] === 'concluida' || $subtracao['intermediario'] === 'pendente'): ?>
+              <a href="questoes.php?tipo=subtracao&dif=intermediario" class="btn btn-warning text-dark w-100 fw-bold shadow-sm py-2">Nível 2: Intermediário</a>
+          <?php else: ?>
+              <a href="questoes.php?tipo=subtracao&dif=iniciante" class="btn btn-info text-white w-100 fw-bold shadow-sm py-2">Nível 1: Iniciante</a>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
+
 <?php include_once(__DIR__ . "/includes/footer.php"); ?>
 </body>
 </html>

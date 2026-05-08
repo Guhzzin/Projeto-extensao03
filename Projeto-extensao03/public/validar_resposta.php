@@ -46,13 +46,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sql_xp = "UPDATE usuarios SET xp = xp + $xp_questao WHERE id = $usuario_id";
         mysqli_query($conn, $sql_xp);
 
-        // Verifica se completou a missão inteira (ex: 2 acertos)
+       // Verifica se completou a missão inteira (ex: 5 acertos)
         if ($_SESSION['progresso'] >= 5) { 
             
-            // GARANTIA: Se a sessão falhar, assume que é iniciante
             $dif_atual = isset($_SESSION['dificuldade_atual']) ? $_SESSION['dificuldade_atual'] : 'iniciante';
             
-            $busca_titulo = "Adição " . ucfirst($dif_atual); // Ex: "Adição Iniciante"
+            // NOVO: Descobre se é Adição ou Subtração de forma dinâmica
+            $nome_categoria = ($tipo_missao == 'soma') ? 'Adição' : 'Subtração';
+            
+            $busca_titulo = $nome_categoria . " " . ucfirst($dif_atual); // Ex: "Adição Iniciante" ou "Subtração Iniciante"
             
             // 1. Marca o nível atual como 'concluida'
             $sql_tarefa = "UPDATE tarefas SET status = 'concluida' 
@@ -69,14 +71,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             if ($proxima_dif !== '') {
-                $titulo_novo = "Adição " . $proxima_dif;
-                // Insere a nova tarefa "pendente" para ele
+                $titulo_novo = $nome_categoria . " " . $proxima_dif;
                 $sql_novo = "INSERT INTO tarefas (usuario_id, titulo, descricao, status) 
                              VALUES ($usuario_id, '$titulo_novo', 'Missão destravada!', 'pendente')";
                 mysqli_query($conn, $sql_novo);
             }
             
-            // Limpa a barra de progresso e manda pra Home
             $_SESSION['progresso'] = 0;
             header("Location: home.php?status=sucesso");
             exit;
