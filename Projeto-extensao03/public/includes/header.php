@@ -13,7 +13,6 @@ $nivel_user = 1;
 // Busca os dados reais do usuário logado se a conexão existir
 if (isset($_SESSION['usuario_id']) && isset($conn)) {
     $id_usuario = $_SESSION['usuario_id'];
-    // Consulta os campos na tabela usuarios
     $query_perfil = "SELECT nome, email, xp FROM usuarios WHERE id = $id_usuario";
     $resultado_perfil = mysqli_query($conn, $query_perfil);
     
@@ -48,6 +47,10 @@ $pagina_atual = basename($_SERVER['PHP_SELF']);
         </li>
         <li class="nav-item">
           <a class="nav-link <?= ($pagina_atual == 'ranking.php') ? 'active' : '' ?>" href="ranking.php">Ranking</a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link <?= ($pagina_atual == 'estatisticas.php') ? 'active' : '' ?>" href="estatisticas.php">Estatísticas</a>
         </li>
       </ul>
       
