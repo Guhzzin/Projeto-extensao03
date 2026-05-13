@@ -13,13 +13,14 @@ $nivel_user = 1;
 // Busca os dados reais do usuário logado se a conexão existir
 if (isset($_SESSION['usuario_id']) && isset($conn)) {
     $id_usuario = $_SESSION['usuario_id'];
-    $query_perfil = "SELECT nome, email, xp FROM usuarios WHERE id = $id_usuario";
+    $query_perfil = "SELECT nome, email, xp, criado_em FROM usuarios WHERE id = $id_usuario";
     $resultado_perfil = mysqli_query($conn, $query_perfil);
     
     if ($resultado_perfil && $usuario_data = mysqli_fetch_assoc($resultado_perfil)) {
         $nome_completo = $usuario_data['nome'];
         $email_user = $usuario_data['email'];
         $xp_user = $usuario_data['xp'];
+        $criado_em = $usuario_data['criado_em'];
         
         // Lógica de nível: ganha 1 nível a cada 50 de XP acumulado
         $nivel_user = floor($xp_user / 50) + 1; 
@@ -52,6 +53,10 @@ $pagina_atual = basename($_SERVER['PHP_SELF']);
         <li class="nav-item">
           <a class="nav-link <?= ($pagina_atual == 'estatisticas.php') ? 'active' : '' ?>" href="estatisticas.php">Estatísticas</a>
         </li>
+
+        <li class="nav-item">
+          <a class="nav-link <?= ($pagina_atual == 'perfil.php') ? 'active' : '' ?>" href="perfil.php"> Perfil</a>
+        </li>
       </ul>
       
       <div class="d-flex align-items-center">
@@ -71,13 +76,13 @@ $pagina_atual = basename($_SERVER['PHP_SELF']);
               aria-labelledby="perfilDropdown" 
               style="width: 280px; border-radius: 15px; overflow: hidden; padding: 0;">
             
-            <div class="text-center p-4" style="background-color: #fdf5ef; border-bottom: 1px solid #eee;">
+            <div class="text-center p-4" >
                 <i class="bi bi-person-circle text-secondary" style="font-size: 3.5rem;"></i>
                 <h6 class="mb-0 fw-bold text-dark mt-2"><?php echo $nome_completo; ?></h6>
                 <small class="text-muted d-block"><?php echo $email_user; ?></small>
             </div>
             
-            <div class="p-3 bg-white">
+            <div class="p-3 bg-light">
                 <div class="d-flex justify-content-between mb-2 px-1">
                     <span class="text-secondary small fw-bold">Nível Atual:</span>
                     <span class="badge bg-primary rounded-pill"><?php echo $nivel_user; ?></span>
@@ -85,6 +90,10 @@ $pagina_atual = basename($_SERVER['PHP_SELF']);
                 <div class="d-flex justify-content-between mb-3 px-1">
                     <span class="text-secondary small fw-bold">Experiência:</span>
                     <span class="badge bg-warning text-dark rounded-pill"><?php echo $xp_user; ?> XP</span>
+                </div>
+                 <div class="d-flex justify-content-between mb-3 px-1">
+                    <span class="text-secondary small fw-bold">Criado em:</span>
+                    <span class="badge bg-secondary text-dark rounded-pill"><?php echo date('d/m/Y', strtotime($criado_em)); ?></span>
                 </div>
                 
                 <hr class="my-2">
