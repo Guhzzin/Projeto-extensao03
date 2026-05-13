@@ -76,13 +76,13 @@ $pagina_atual = basename($_SERVER['PHP_SELF']);
               aria-labelledby="perfilDropdown" 
               style="width: 280px; border-radius: 15px; overflow: hidden; padding: 0;">
             
-            <div class="text-center p-4" >
+            <div class="text-center p-4 bg-light" >
                 <i class="bi bi-person-circle text-secondary" style="font-size: 3.5rem;"></i>
                 <h6 class="mb-0 fw-bold text-dark mt-2"><?php echo $nome_completo; ?></h6>
                 <small class="text-muted d-block"><?php echo $email_user; ?></small>
             </div>
             
-            <div class="p-3 bg-light">
+            <div class="p-3 ">
                 <div class="d-flex justify-content-between mb-2 px-1">
                     <span class="text-secondary small fw-bold">Nível Atual:</span>
                     <span class="badge bg-primary rounded-pill"><?php echo $nivel_user; ?></span>
