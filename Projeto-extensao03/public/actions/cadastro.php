@@ -13,14 +13,17 @@ if ($conn->query($sql)){
     // cria as primeiras missões para ele automaticamente
     $sql_tarefa1 = "INSERT INTO tarefas (usuario_id, titulo, descricao, status) VALUES ($novo_usuario_id, 'Adição Iniciante', 'Missão básica de soma', 'pendente')";
     $sql_tarefa2 = "INSERT INTO tarefas (usuario_id, titulo, descricao, status) VALUES ($novo_usuario_id, 'Subtração Iniciante', 'Missão básica de subtração', 'pendente')";
-    
+    $sql_tarefa3 = "INSERT INTO tarefas (usuario_id, titulo, descricao, status) VALUES ($novo_usuario_id, 'Multiplicação Iniciante', 'Missão básica de multiplicação', 'pendente')";
+  
     $conn->query($sql_tarefa1);
     $conn->query($sql_tarefa2);
-
+    $conn->query($sql_tarefa3);
     //  bem-sucedido
     header("Location: ../login.php?sucesso=1");
     exit;
 } else {
     // Erro 
     echo "Erro: " . $sql . "<br>" . $conn->error;
+
+    
 }
