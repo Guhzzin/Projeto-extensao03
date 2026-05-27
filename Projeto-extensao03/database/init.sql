@@ -87,6 +87,30 @@ INSERT INTO banco_questoes (categoria, dificuldade, enunciado, opcao_a, opcao_b,
 ('subtracao', 'veterano', 'Resolva a expressão com duas subtrações: 15.000 - 3.750 - 1.250 = ?', '9.000', '9.500', '10.000', '10.500', 'C', 50),
 ('subtracao', 'veterano', 'Subtrair 9.999 de 20.000 resulta exatamente no número 10.001.', 'Verdadeiro', 'Falso', NULL, NULL, 'A', 50);
 
+INSERT INTO banco_questoes (categoria, dificuldade, enunciado, opcao_a, opcao_b, opcao_c, opcao_d, resposta_correta, xp_recompensa) VALUES 
+
+('multiplicacao', 'iniciante', 'Quanto é 3 x 4?', '10', '12', '14', '16', 'B', 10),
+('multiplicacao', 'iniciante', 'Se você tem 2 pacotes com 5 balas cada, quantas balas você tem no total?', '5', '7', '10', '15', 'C', 10),
+('multiplicacao', 'iniciante', 'Qual é o dobro de 6?', '8', '10', '12', '14', 'C', 10),
+('multiplicacao', 'iniciante', 'Resolva: 7 x 8 = ?', '54', '56', '64', '49', 'B', 10),
+('multiplicacao', 'iniciante', 'Todo número multiplicado por zero é igual a zero.', 'Verdadeiro', 'Falso', NULL, NULL, 'A', 10),
+
+
+('multiplicacao', 'intermediario', 'Se uma caixa tem 12 ovos, quantos ovos há em 5 caixas?', '50', '60', '70', '80', 'B', 20),
+('multiplicacao', 'intermediario', 'Calcule: 15 x 4 = ?', '45', '55', '60', '65', 'C', 20),
+('multiplicacao', 'intermediario', 'Um pacote de figurinhas custa R$ 3. Se João comprar 25 pacotes, quanto ele vai gastar?', 'R$ 60', 'R$ 65', 'R$ 70', 'R$ 75', 'D', 20),
+('multiplicacao', 'intermediario', 'Qual o resultado de 40 x 20?', '600', '800', '1000', '1200', 'B', 20),
+('multiplicacao', 'intermediario', 'O triplo de 15 é um número maior que 50.', 'Verdadeiro', 'Falso', NULL, NULL, 'B', 20),
+
+
+('multiplicacao', 'veterano', 'Calcule o valor exato de 125 x 14:', '1.650', '1.750', '1.850', '1.950', 'B', 50),
+('multiplicacao', 'veterano', 'Uma fábrica produz 450 peças por dia. Quantas peças serão produzidas em 30 dias de trabalho?', '12.500', '13.000', '13.500', '14.000', 'C', 50),
+('multiplicacao', 'veterano', 'Qual é o resultado de 2.500 x 12?', '25.000', '30.000', '35.000', '40.000', 'B', 50),
+('multiplicacao', 'veterano', 'Um evento vendeu 345 ingressos a R$ 120 cada. Qual foi a arrecadação total?', 'R$ 40.400', 'R$ 41.400', 'R$ 42.400', 'R$ 43.400', 'B', 50),
+('multiplicacao', 'veterano', 'O resultado de 99 x 99 é estritamente menor que 10.000.', 'Verdade', 'Falso', NULL, NULL, 'A', 50),
+('multiplicacao', 'veterano', 'Calcule a multiplicação de três números: 25 x 4 x 3 = ?', '250', '300', '350', '400', 'B', 50),
+('multiplicacao', 'veterano', 'Se um carro percorre 15 km em 1 hora, quantos quilômetros ele percorrerá em 8 horas?', '100 km', '110 km', '120 km', '130 km', 'C', 50);
+
 CREATE TABLE historico_respostas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,

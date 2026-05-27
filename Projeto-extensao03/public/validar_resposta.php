@@ -26,17 +26,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $acertou = 0; // 0 = false (errou) no banco
     }
 
-    // ==========================================
+    
     // 4. SALVA O HISTÓRICO NO BANCO DE DADOS
-    // ==========================================
+
     // Guarda se ele acertou ou errou para não repetir a pergunta depois
     $sql_historico = "INSERT INTO historico_respostas (usuario_id, questao_id, acertou) 
                       VALUES ($usuario_id, $questao_id, $acertou)";
     mysqli_query($conn, $sql_historico);
 
-    // ==========================================
+
     // 5. FLUXO DE ACERTO OU ERRO
-    // ==========================================
+    
     if ($acertou === 1) {
         
         // Aumenta o Combo/Progresso
@@ -51,10 +51,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             $dif_atual = isset($_SESSION['dificuldade_atual']) ? $_SESSION['dificuldade_atual'] : 'iniciante';
             
-            // NOVO: Descobre se é Adição ou Subtração de forma dinâmica
-            $nome_categoria = ($tipo_missao == 'soma') ? 'Adição' : 'Subtração';
-            
-            $busca_titulo = $nome_categoria . " " . ucfirst($dif_atual); // Ex: "Adição Iniciante" ou "Subtração Iniciante"
+            // Descobre qual é a categoria exata (Lida com a acentuação)
+$nome_categoria = 'Adição';
+if ($tipo_missao === 'subtracao') {
+    $nome_categoria = 'Subtração';
+} elseif ($tipo_missao === 'multiplicacao') {
+    $nome_categoria = 'Multiplicação';
+}
+            $busca_titulo = $nome_categoria . " " . ucfirst($dif_atual); // Busca o titulo exato da tarefea
             
             // 1. Marca o nível atual como 'concluida'
             $sql_tarefa = "UPDATE tarefas SET status = 'concluida' 

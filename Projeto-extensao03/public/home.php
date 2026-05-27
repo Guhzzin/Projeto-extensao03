@@ -12,11 +12,13 @@ if ($resultado && $usuario = mysqli_fetch_assoc($resultado)) {
     $nome_exibicao = $usuario['nome'];
 }
 
-//
-// Array matriz que guarda o status de TUDO!
+// ----------------------------------------------------
+// MAPEAMENTO DINÂMICO DOS STATUS DE NÍVEIS
+// ----------------------------------------------------
 $missoes = [
     'Adição' => ['iniciante' => 'pendente', 'intermediario' => 'nao_existe', 'veterano' => 'nao_existe'],
-    'Subtração' => ['iniciante' => 'pendente', 'intermediario' => 'nao_existe', 'veterano' => 'nao_existe']
+    'Subtração' => ['iniciante' => 'pendente', 'intermediario' => 'nao_existe', 'veterano' => 'nao_existe'],
+    'Multiplicação' => ['iniciante' => 'pendente', 'intermediario' => 'nao_existe', 'veterano' => 'nao_existe']
 ];
 
 $sql_tarefas = "SELECT titulo, status FROM tarefas WHERE usuario_id = $id_usuario";
@@ -24,22 +26,24 @@ $res_tarefas = mysqli_query($conn, $sql_tarefas);
 
 if ($res_tarefas) {
     while($row = mysqli_fetch_assoc($res_tarefas)) {
-        // Separa o "Adição" do "Iniciante" (O banco guarda "Adição Iniciante")
+        // Separa a String. Ex: "Multiplicação Iniciante" vira ['Multiplicação', 'Iniciante']
         $partes = explode(' ', trim($row['titulo']));
         
         if (count($partes) >= 2) {
-            $categoria = $partes[0]; // Adição ou Subtração
-            $dificuldade = strtolower($partes[1]); // iniciante, intermediario, veterano
+            $categoria = $partes[0]; 
+            $dificuldade = strtolower($partes[1]); 
+            // Corrige possíveis variações de acentuação vindas do banco
+            if ($dificuldade === 'intermediário') $dificuldade = 'intermediario';
+            
             $status = $row['status'];
 
-            // Se existir no nosso array, atualiza o status real
             if (isset($missoes[$categoria][$dificuldade])) {
                 $missoes[$categoria][$dificuldade] = $status;
             }
         }
     }
 }
-
+// ----------------------------------------------------
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -80,7 +84,7 @@ if ($res_tarefas) {
 <div class="container">
   <div class="row mt-4 justify-content-center">
     
-    <div class="col-md-5 mb-4">
+    <div class="col-md-4 mb-4">
       <div class="card h-100 border-start border-4 border-success shadow-sm">
         <div class="card-body text-center p-4">
           <div class="display-1 text-success mb-3"><i class="bi bi-plus-circle-fill"></i></div>
@@ -102,12 +106,12 @@ if ($res_tarefas) {
       </div>
     </div>
 
-    <div class="col-md-5 mb-4">
+    <div class="col-md-4 mb-4">
       <div class="card h-100 border-start border-4 border-info shadow-sm">
         <div class="card-body text-center p-4">
           <div class="display-1 text-info mb-3"><i class="bi bi-dash-circle-fill"></i></div>
           <h4 class="card-title fw-bold">Subtração</h4>
-          <p class="card-text text-body-secondary mb-4">Treine a lógica de diminuir e resolver diferenças.</p>
+          <p class="card-text text-body-secondary mb-4">Treine a lógica de resolver diferenças.</p>
           
           <?php 
           $subtracao = $missoes['Subtração']; 
@@ -119,6 +123,28 @@ if ($res_tarefas) {
               <a href="questoes.php?tipo=subtracao&dif=intermediario" class="btn btn-warning text-dark w-100 fw-bold shadow-sm py-2">Nível 2: Intermediário</a>
           <?php else: ?>
               <a href="questoes.php?tipo=subtracao&dif=iniciante" class="btn btn-info text-white w-100 fw-bold shadow-sm py-2">Nível 1: Iniciante</a>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 border-start border-4 border-warning shadow-sm">
+        <div class="card-body text-center p-4">
+          <div class="display-1 text-warning mb-3"><i class="bi bi-x-circle-fill"></i></div>
+          <h4 class="card-title fw-bold">Multiplicação</h4>
+          <p class="card-text text-body-secondary mb-4">Domine as tabuadas e multiplique seus pontos.</p>
+          
+          <?php 
+          $mult = $missoes['Multiplicação']; 
+          if ($mult['veterano'] === 'concluida'): ?>
+              <button class="btn btn-secondary w-100 fw-bold py-2" disabled><i class="bi bi-check-circle-fill"></i> Mestre da Multiplicação</button>
+          <?php elseif ($mult['intermediario'] === 'concluida' || $mult['veterano'] === 'pendente'): ?>
+              <a href="questoes.php?tipo=multiplicacao&dif=veterano" class="btn btn-danger w-100 fw-bold shadow-sm py-2">Nível 3: Veterano</a>
+          <?php elseif ($mult['iniciante'] === 'concluida' || $mult['intermediario'] === 'pendente'): ?>
+              <a href="questoes.php?tipo=multiplicacao&dif=intermediario" class="btn btn-warning text-dark w-100 fw-bold shadow-sm py-2">Nível 2: Intermediário</a>
+          <?php else: ?>
+              <a href="questoes.php?tipo=multiplicacao&dif=iniciante" class="btn btn-warning text-dark w-100 fw-bold shadow-sm py-2">Nível 1: Iniciante</a>
           <?php endif; ?>
         </div>
       </div>

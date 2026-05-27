@@ -16,10 +16,15 @@ $_SESSION['missao_atual'] = $tipo;
 
 
 
-// 3. TRAVA: VERIFICA SE JÁ CONCLUIU A MISSÃO EXATA QUE ELE QUER ACESSAR
-
-// Monta o nome exato da tarefa. Ex: "Adição Iniciante", "Adição Intermediario"
-$nome_tarefa_exata = ucfirst($tipo) . " " . ucfirst($dificuldade);
+// Define o nome correto para buscar na tabela 'tarefas'
+$nome_categoria = 'Adição';
+if ($tipo === 'subtracao') {
+    $nome_categoria = 'Subtração';
+} elseif ($tipo === 'multiplicacao') {
+    $nome_categoria = 'Multiplicação';
+}
+// Monta o nome exato.
+$nome_tarefa_exata = $nome_categoria . " " . ucfirst($dificuldade);
 
 // Usa "=" no lugar do LIKE para garantir que é exatamente aquela tarefa
 $sql_check = "SELECT status FROM tarefas WHERE usuario_id = $usuario_id AND titulo = '$nome_tarefa_exata'";
